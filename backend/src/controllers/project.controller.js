@@ -63,19 +63,19 @@ export const addMember = async (req, res) => {
   if (!email && !userId) {
     return res
       .status(400)
-      .json({ message: 'Please provide email or userId to add a member' });
+      .json({ message: "Please provide email or userId to add a member" });
   }
 
   const project = await Project.findById(projectId);
   if (!project) {
-    return res.status(404).json({ message: 'Project not found' });
+    return res.status(404).json({ message: "Project not found" });
   }
 
   const ownerId = project.owner?.toString();
   if (ownerId !== req.user._id.toString()) {
     return res
       .status(403)
-      .json({ message: 'Only the project owner can add members' });
+      .json({ message: "Only the project owner can add members" });
   }
 
   const member = email
@@ -83,7 +83,7 @@ export const addMember = async (req, res) => {
     : await User.findById(userId);
 
   if (!member) {
-    return res.status(404).json({ message: 'Member user not found' });
+    return res.status(404).json({ message: "Member user not found" });
   }
 
   const memberId = member._id.toString();
@@ -94,7 +94,7 @@ export const addMember = async (req, res) => {
   if (isAlreadyMember) {
     return res
       .status(400)
-      .json({ message: 'User is already a project member' });
+      .json({ message: "User is already a project member" });
   }
 
   project.members.push(member._id);
