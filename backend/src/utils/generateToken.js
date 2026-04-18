@@ -1,6 +1,9 @@
+import jwt from "jsonwebtoken";
+
 const generateToken = (userId) => {
-  // TODO: generate JWT token for authenticated user
-  return '';
+  return jwt.sign({ userId: userId }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
 };
 
 export default generateToken;
