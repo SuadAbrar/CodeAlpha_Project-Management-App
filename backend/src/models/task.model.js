@@ -2,12 +2,27 @@ import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema(
   {
-    title: String,
-    description: String,
-    status: String,
-    list: String,
-    project: mongoose.Schema.Types.ObjectId,
-    assignee: mongoose.Schema.Types.ObjectId,
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["TODO", "IN_PROGRESS", "DONE"],
+      default: "TODO",
+    },
+    assignedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    projectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+      required: true,
+    },
   },
   {
     timestamps: true,
