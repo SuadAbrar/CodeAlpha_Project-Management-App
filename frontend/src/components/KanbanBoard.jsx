@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import {
   DndContext,
   DragOverlay,
@@ -9,16 +10,15 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import Column from "./Column";
 import TaskCard from "./TaskCard";
 import { taskService } from "../services/taskService";
 
-const KanbanBoard = ({ projectId }) => {
+const KanbanBoard = () => {
+  const { projectId } = useParams();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTask, setActiveTask] = useState(null);
@@ -30,11 +30,7 @@ const KanbanBoard = ({ projectId }) => {
     }),
   );
 
-  useEffect(() => {
-    fetchTasks();
-  }, [projectId]);
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const fetchedTasks = await taskService.getTasksByProject(projectId);
       setTasks(fetchedTasks);
@@ -43,7 +39,12 @@ const KanbanBoard = ({ projectId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchTasks();
+  }, [fetchTasks]);
 
   const getTasksByStatus = (status) => {
     return tasks.filter((task) => task.status === status);

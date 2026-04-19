@@ -1,13 +1,21 @@
-import KanbanBoard from './components/KanbanBoard';
+import { Routes, Route } from "react-router-dom";
+import KanbanBoard from "./components/KanbanBoard";
 
 function App() {
-  // For demo purposes, using a hardcoded projectId
-  // In a real app, this would come from routing or context
-  const projectId = '507f1f77bcf86cd799439011'; // Replace with actual project ID
-
   return (
     <div className="App">
-      <KanbanBoard projectId={projectId} />
+      <Routes>
+        <Route path="/projects/:projectId" element={<KanbanBoard />} />
+        <Route path="/projects/:projectId/board" element={<KanbanBoard />} />
+        <Route
+          path="/"
+          element={
+            <div className="flex justify-center items-center h-screen">
+              <h1 className="text-2xl">Welcome to Project Management App</h1>
+            </div>
+          }
+        />
+      </Routes>
     </div>
   );
 }
