@@ -1,20 +1,23 @@
 import mongoose from "mongoose";
 
-const commentSchema = new mongoose.Schema(
+const activityLogSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    taskId: {
+    projectId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Task",
+      ref: "Project",
       required: true,
     },
-    text: {
+    action: {
       type: String,
       required: true,
+    },
+    details: {
+      type: mongoose.Schema.Types.Mixed, // For additional data like taskId, oldStatus, newStatus, etc.
     },
   },
   {
@@ -22,4 +25,4 @@ const commentSchema = new mongoose.Schema(
   },
 );
 
-export default mongoose.model("Comment", commentSchema);
+export default mongoose.model("ActivityLog", activityLogSchema);

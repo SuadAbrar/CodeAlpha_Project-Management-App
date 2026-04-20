@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, onClick }) => {
   const {
     attributes,
     listeners,
@@ -36,6 +36,13 @@ const TaskCard = ({ task }) => {
       style={style}
       {...attributes}
       {...listeners}
+      onClick={(e) => {
+        // Prevent click when dragging
+        if (!isDragging && onClick) {
+          e.stopPropagation();
+          onClick(task);
+        }
+      }}
       className={`bg-white p-4 rounded-xl shadow-sm border-l-4 ${getStatusBorderColor(
         task.status,
       )} border border-gray-100 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-grab active:cursor-grabbing group`}

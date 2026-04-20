@@ -1,6 +1,7 @@
 import Task from "../models/task.model.js";
 import Project from "../models/project.model.js";
 import User from "../models/user.model.js";
+import { logActivity } from "../utils/activityLogger.js";
 
 export const createTask = async (req, res) => {
   const { title, description, projectId, assignedTo } = req.body;
@@ -45,6 +46,12 @@ export const createTask = async (req, res) => {
     description,
     projectId,
     assignedTo,
+  });
+
+  // Log activity
+  await logActivity(req.user._id, projectId, "TASK_CREATED", {
+    taskId: task._id,
+    title: task.title,
   });
 
   res.status(201).json(task);
@@ -147,8 +154,18 @@ export const moveTask = async (req, res) => {
       .json({ message: "Access denied. You are not a member of this project" });
   }
 
+  const oldStatus = task.status;
   task.status = status;
   const updatedTask = await task.save();
+
+  // Log activity
+  await logActivity(req.user._id, project._id, "TASK_MOVED", {
+    taskId: task._id,
+    taskTitle: task.title,
+    oldStatus,
+    newStatus: status,
+  });
+
   res.json(updatedTask);
 };
 

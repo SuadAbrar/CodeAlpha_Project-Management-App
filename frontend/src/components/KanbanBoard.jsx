@@ -15,6 +15,7 @@ import {
 } from "@dnd-kit/sortable";
 import Column from "./Column";
 import TaskCard from "./TaskCard";
+import TaskDetailModal from "./TaskDetailModal";
 import { taskService } from "../services/taskService";
 
 const KanbanBoard = () => {
@@ -22,6 +23,8 @@ const KanbanBoard = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTask, setActiveTask] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -46,6 +49,21 @@ const KanbanBoard = () => {
     fetchTasks();
   }, [fetchTasks]);
 
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTask(null);
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchTasks();
+  }, [fetchTasks]);
+
   const getTasksByStatus = (status) => {
     return tasks.filter((task) => task.status === status);
   };
@@ -64,6 +82,9 @@ const KanbanBoard = () => {
 
     const taskId = active.id;
     const newStatus = over.id;
+    const validStatuses = ["TODO", "IN_PROGRESS", "DONE"];
+
+    if (!validStatuses.includes(newStatus)) return;
 
     // Find the task
     const task = tasks.find((t) => t._id === taskId);
@@ -114,13 +135,14 @@ const KanbanBoard = () => {
           onDragEnd={handleDragEnd}
         >
           <div className="flex gap-6 overflow-x-auto pb-6 px-2">
-            <Column id="TODO" title="To Do" tasks={getTasksByStatus("TODO")} />
+            <Column id="TODO" title="To Do" tasks={getTasksByStatus("TODO")} onTaskClick={handleTaskClick} />
             <Column
               id="IN_PROGRESS"
               title="In Progress"
               tasks={getTasksByStatus("IN_PROGRESS")}
+              onTaskClick={handleTaskClick}
             />
-            <Column id="DONE" title="Done" tasks={getTasksByStatus("DONE")} />
+            <Column id="DONE" title="Done" tasks={getTasksByStatus("DONE")} onTaskClick={handleTaskClick} />
           </div>
 
           <DragOverlay>
@@ -128,6 +150,13 @@ const KanbanBoard = () => {
           </DragOverlay>
         </DndContext>
       </div>
+
+      <TaskDetailModal
+        task={selectedTask}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        projectId={projectId}
+      />
     </div>
   );
 };

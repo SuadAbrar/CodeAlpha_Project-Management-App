@@ -1,7 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import TaskCard from "./TaskCard";
 
-const Column = ({ id, title, tasks, className = "" }) => {
+const Column = ({ id, title, tasks, className = "", onTaskClick }) => {
   const { setNodeRef, isOver } = useDroppable({
     id,
   });
@@ -66,7 +66,7 @@ const Column = ({ id, title, tasks, className = "" }) => {
         ) : (
           <div className="space-y-4">
             {tasks.map((task) => (
-              <TaskCard key={task._id} task={task} />
+              <TaskCard key={task._id} task={task} onClick={onTaskClick} />
             ))}
           </div>
         )}
